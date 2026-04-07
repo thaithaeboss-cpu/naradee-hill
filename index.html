@@ -543,7 +543,29 @@
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
+
+  /* Floating close button — iOS Safari fallback when header scrolls out of view */
+  #floatingClose {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    right: 16px;
+    z-index: 9999;
+    display: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--border);
+    font-size: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    color: var(--text);
+  }
+  #floatingClose.show { display: flex; }
 
   /* Form */
   .form-group {
@@ -1678,6 +1700,8 @@
 </head>
 <body>
 
+<button id="floatingClose" onclick="closeAnyModal()" aria-label="ปิด">✕</button>
+
 <div class="header">
   <div class="header-content">
     <div class="header-top">
@@ -2276,6 +2300,18 @@
     `;
   }
 
+  function showFloatingClose() {
+    document.getElementById('floatingClose').classList.add('show');
+  }
+  function hideFloatingClose() {
+    document.getElementById('floatingClose').classList.remove('show');
+  }
+  function closeAnyModal() {
+    if (document.getElementById('dayDetailOverlay').classList.contains('active')) closeDay();
+    else if (document.getElementById('modalOverlay').classList.contains('active')) closeModal();
+    else if (document.getElementById('settingsOverlay').classList.contains('active')) closeSettings();
+  }
+
   function openSettings() {
     document.getElementById('firebaseUrl').value = dbUrl;
     document.getElementById('disableBtn').style.display = dbUrl ? 'block' : 'none';
@@ -2283,12 +2319,14 @@
     document.getElementById('settingsOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
     history.pushState({modal: 'settings'}, '');
+    showFloatingClose();
   }
 
   function closeSettings() {
     const wasActive = document.getElementById('settingsOverlay').classList.contains('active');
     document.getElementById('settingsOverlay').classList.remove('active');
     document.body.style.overflow = '';
+    hideFloatingClose();
     if (wasActive && !isHandlingPopstate) {
       history.back();
     }
@@ -2512,6 +2550,7 @@
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
     history.pushState({modal: 'booking'}, '');
+    showFloatingClose();
   }
 
   function closeModal() {
@@ -2519,6 +2558,7 @@
     document.getElementById('modalOverlay').classList.remove('active');
     document.body.style.overflow = '';
     editingId = null;
+    hideFloatingClose();
     if (wasActive && !isHandlingPopstate) {
       history.back();
     }
@@ -3045,12 +3085,14 @@
     document.getElementById('dayDetailOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
     history.pushState({ modal: 'dayDetail' }, '');
+    showFloatingClose();
   }
 
   function closeDay() {
     const wasActive = document.getElementById('dayDetailOverlay').classList.contains('active');
     document.getElementById('dayDetailOverlay').classList.remove('active');
     document.body.style.overflow = '';
+    hideFloatingClose();
     if (wasActive && !isHandlingPopstate) history.back();
   }
 

@@ -1,0 +1,3246 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2d5f3f">
+<title>นรดีฮิวล์ รีสอร์ท - จองที่พัก</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    --primary: #2d5f3f;
+    --primary-dark: #1f4530;
+    --primary-light: #4a8a5e;
+    --accent: #d4a574;
+    --accent-dark: #b8895a;
+    --bg: #f5f1ea;
+    --card: #ffffff;
+    --text: #2c3e30;
+    --text-light: #6b7770;
+    --border: #e5dfd3;
+    --danger: #c0392b;
+    --success: #27ae60;
+    --warning: #e67e22;
+    --shadow: 0 4px 20px rgba(45, 95, 63, 0.08);
+    --shadow-lg: 0 8px 30px rgba(45, 95, 63, 0.15);
+  }
+
+  html, body {
+    font-family: 'Prompt', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  body {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--bg);
+    padding-bottom: 100px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 24px 20px 28px;
+    border-radius: 0 0 24px 24px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 150px;
+    height: 150px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .resort-name {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .resort-tagline {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 300;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+  }
+
+  .icon-btn:active {
+    transform: scale(0.95);
+  }
+
+  .sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-top: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #95a5a6;
+  }
+
+  .sync-dot.online {
+    background: #2ecc71;
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+    animation: pulse 2s infinite;
+  }
+
+  .sync-dot.syncing {
+    background: #f39c12;
+    animation: pulse 1s infinite;
+  }
+
+  .sync-dot.offline {
+    background: #e74c3c;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .stat-card {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 12px;
+    border-radius: 14px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .stat-number {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
+
+  /* Main Content */
+  .container {
+    padding: 20px 16px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title-bar {
+    width: 4px;
+    height: 18px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+
+  /* Filter Tabs */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tab {
+    background: white;
+    border: 2px solid var(--border);
+    color: var(--text-light);
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .filter-tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  /* Booking Cards */
+  .booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .booking-card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--primary);
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .booking-card:active {
+    transform: scale(0.98);
+  }
+
+  .booking-card.checkedin {
+    border-left-color: var(--success);
+  }
+
+  .booking-card.completed {
+    border-left-color: var(--text-light);
+    opacity: 0.7;
+  }
+
+  .booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+
+  .guest-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .guest-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+    word-break: break-word;
+  }
+
+  .guest-phone {
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  .source-badge {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .source-facebook {
+    background: #e7f0ff;
+    color: #1877f2;
+  }
+
+  .source-booking {
+    background: #e6f3ff;
+    color: #003580;
+  }
+
+  .source-phone {
+    background: #e8f5e8;
+    color: #2d5f3f;
+  }
+
+  .source-walkin {
+    background: #fff4e6;
+    color: #e67e22;
+  }
+
+  .booking-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .detail-item {
+    background: var(--bg);
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .detail-label {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-bottom: 2px;
+  }
+
+  .detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .room-tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 4px;
+    margin-top: 4px;
+  }
+
+  .booking-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .btn-action {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-edit {
+    background: #f0e6d6;
+    color: var(--accent-dark);
+  }
+
+  .btn-delete {
+    background: #fde8e6;
+    color: var(--danger);
+  }
+
+  .btn-status {
+    background: var(--primary);
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+
+  .empty-icon {
+    font-size: 60px;
+    margin-bottom: 12px;
+    opacity: 0.3;
+  }
+
+  .empty-text {
+    font-size: 15px;
+  }
+
+  /* Floating Button */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    padding: 18px 32px;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(45, 95, 63, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    transition: all 0.2s;
+    max-width: 90%;
+  }
+
+  .fab:active {
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  .fab-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.2s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal {
+    background: var(--bg);
+    width: 100%;
+    max-width: 600px;
+    max-height: 92vh;
+    border-radius: 24px 24px 0 0;
+    animation: slideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    background: white;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 24px 24px 0 0;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .modal-title {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .modal-close {
+    background: var(--bg);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+  }
+
+  .modal-body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 16px;
+    background: white;
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 70px;
+    font-family: inherit;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Source Selector */
+  .source-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .source-option {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .source-option.selected {
+    border-color: var(--primary);
+    background: #e8f0ea;
+  }
+
+  .source-option-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .source-option-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Room Selector */
+  .room-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .room-option {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .room-option.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+  }
+
+  .room-option-icon {
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+
+  .room-option-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .room-category {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin: 14px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Submit Button */
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    box-shadow: 0 4px 14px rgba(45, 95, 63, 0.3);
+  }
+
+  .btn-submit:active {
+    transform: scale(0.98);
+  }
+
+  /* Status Badge */
+  .status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  .status-pending {
+    background: #fff4e6;
+    color: var(--warning);
+  }
+
+  .status-checkedin {
+    background: #e6f7ed;
+    color: var(--success);
+  }
+
+  .status-completed {
+    background: #ececec;
+    color: var(--text-light);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .toast.show {
+    opacity: 1;
+    top: 30px;
+  }
+
+  /* Search */
+  .search-bar {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 15px;
+    background: transparent;
+    color: var(--text);
+  }
+
+  .search-icon {
+    font-size: 18px;
+    opacity: 0.5;
+  }
+
+  /* Notes */
+  .booking-notes {
+    background: var(--bg);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .price-tag {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  /* Payment Box */
+  .payment-box {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .payment-calc {
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    padding: 12px 14px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .payment-calc.empty {
+    color: var(--text-light);
+  }
+
+  .payment-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+
+  .remaining-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .remaining-display.paid {
+    background: #e6f7ed;
+    color: var(--success);
+  }
+
+  .remaining-display.partial {
+    background: #fff4e6;
+    color: var(--warning);
+  }
+
+  .remaining-display.unpaid {
+    background: #fde8e6;
+    color: var(--danger);
+  }
+
+  /* Price Settings */
+  .price-header-row {
+    display: grid;
+    grid-template-columns: 1fr 95px 95px;
+    gap: 8px;
+    align-items: end;
+    padding: 0 14px 6px;
+    margin-bottom: 4px;
+  }
+
+  .price-col-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .price-col-label span {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-light);
+  }
+
+  .price-col-label.weekend {
+    color: #c2410c;
+  }
+
+  .price-row-mini {
+    display: grid;
+    grid-template-columns: 1fr 95px 95px;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 14px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .price-room-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .price-input-mini {
+    border: 1px solid var(--border);
+    padding: 10px 10px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    text-align: right;
+    background: var(--bg);
+    width: 100%;
+    outline: none;
+    min-width: 0;
+  }
+
+  .price-input-mini:focus {
+    border-color: var(--primary);
+    background: white;
+  }
+
+  .price-input-mini.weekend {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    color: #9a3412;
+  }
+
+  .price-input-mini.weekend:focus {
+    border-color: #f97316;
+    background: white;
+  }
+
+  /* Payment Summary in Card */
+  .payment-summary-card {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .payment-summary-card.paid {
+    background: #e6f7ed;
+  }
+
+  .payment-summary-card.partial {
+    background: #fff4e6;
+  }
+
+  .payment-summary-card.unpaid {
+    background: #fde8e6;
+  }
+
+  .payment-amounts {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .payment-amounts .paid-num {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .payment-amounts .total-num {
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  .payment-status-tag {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .payment-status-tag.paid {
+    background: var(--success);
+    color: white;
+  }
+
+  .payment-status-tag.partial {
+    background: var(--warning);
+    color: white;
+  }
+
+  .payment-status-tag.unpaid {
+    background: var(--danger);
+    color: white;
+  }
+
+  /* Setup Wizard */
+  .setup-step {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--primary);
+  }
+
+  .setup-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  .setup-step-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+  }
+
+  .setup-step-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-left: 32px;
+  }
+
+  .setup-step-desc a {
+    color: var(--primary);
+    word-break: break-all;
+  }
+
+  .info-box {
+    background: #e8f0ea;
+    border: 1px solid #b8d4be;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--primary-dark);
+    line-height: 1.5;
+  }
+
+  .info-box strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    background: white;
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 14px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .btn-secondary:active {
+    transform: scale(0.98);
+  }
+
+  @media (min-width: 480px) {
+    .resort-name {
+      font-size: 28px;
+    }
+  }
+
+  /* ===== View Toggle ===== */
+  .view-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .view-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    background: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .view-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  /* ===== Calendar ===== */
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .cal-nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: white;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .cal-nav-btn:active { transform: scale(0.92); }
+
+  .cal-month-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .cal-dow-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  .cal-dow-cell {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    padding: 4px 0 6px;
+  }
+
+  .cal-dow-cell.wd-sun, .cal-dow-cell.wd-sat { color: #c2410c; }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cal-cell {
+    background: white;
+    border-radius: 10px;
+    padding: 5px 3px 5px;
+    text-align: center;
+    cursor: pointer;
+    min-height: 62px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    border: 1.5px solid transparent;
+    transition: transform 0.1s;
+    position: relative;
+  }
+
+  .cal-cell:active { transform: scale(0.93); }
+
+  .cal-cell.empty {
+    background: transparent;
+    pointer-events: none;
+    border-color: transparent;
+  }
+
+  .cal-cell.today { border-color: var(--primary); }
+
+  .cal-cell.past { opacity: 0.45; }
+
+  .cal-cell.occ-low  { background: #f0fdf4; }
+  .cal-cell.occ-mid  { background: #fefce8; }
+  .cal-cell.occ-high { background: #fff7ed; }
+  .cal-cell.occ-full { background: #fef2f2; border-color: #fca5a5; }
+
+  .cal-date {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+  }
+
+  .cal-cell.today .cal-date {
+    background: var(--primary);
+    color: white;
+  }
+
+  .cal-cell.wd-sun .cal-date,
+  .cal-cell.wd-sat .cal-date { color: #c2410c; }
+
+  .cal-cell.today .cal-date { color: white; }
+
+  .cal-avail {
+    font-size: 9.5px;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 1px;
+  }
+
+  .avail-ok   { color: #16a34a; }
+  .avail-mid  { color: #b45309; }
+  .avail-low  { color: #ea580c; }
+  .avail-full { color: #dc2626; }
+
+  .cal-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    max-width: 100%;
+    margin-top: 1px;
+  }
+
+  .cal-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-facebook { background: #1d4ed8; }
+  .dot-booking  { background: #0369a1; }
+  .dot-phone    { background: var(--primary); }
+  .dot-walkin   { background: var(--accent-dark); }
+
+  .cal-dot-more {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--text-light);
+  }
+
+  /* ===== Day Detail Modal ===== */
+  .day-detail-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+
+  .day-detail-overlay.active { display: flex; }
+
+  .day-detail-modal {
+    background: var(--bg);
+    width: 100%;
+    max-width: 600px;
+    max-height: 82vh;
+    border-radius: 24px 24px 0 0;
+    animation: slideUp 0.28s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .day-detail-header {
+    background: white;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .day-detail-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .day-detail-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .avail-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .avail-badge.ok   { background: #f0fdf4; color: #16a34a; }
+  .avail-badge.full { background: #fef2f2; color: #dc2626; }
+  .avail-badge.some { background: #fff7ed; color: #ea580c; }
+
+  .room-availability-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .room-avail-chip {
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .room-avail-chip.free {
+    background: #f0fdf4;
+    color: #166534;
+  }
+
+  .room-avail-chip.taken {
+    background: #fef2f2;
+    color: #991b1b;
+    text-decoration: line-through;
+    opacity: 0.75;
+  }
+
+  .day-section-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  .day-booking-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    active: scale(0.98);
+  }
+
+  .day-booking-card:active { transform: scale(0.98); }
+
+  .day-booking-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .day-booking-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .day-booking-rooms {
+    font-size: 13px;
+    color: var(--text-light);
+  }
+
+  .day-booking-dates {
+    font-size: 12px;
+    color: var(--text-light);
+  }
+
+  .day-empty {
+    text-align: center;
+    color: var(--text-light);
+    padding: 24px 0;
+    font-size: 15px;
+  }
+
+  .cal-legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    margin-bottom: 90px;
+    padding: 12px 14px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 600;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .legend-dot.low  { background: #f0fdf4; border: 1px solid #86efac; }
+  .legend-dot.mid  { background: #fefce8; border: 1px solid #fde047; }
+  .legend-dot.high { background: #fff7ed; border: 1px solid #fdba74; }
+  .legend-dot.full { background: #fef2f2; border: 1px solid #fca5a5; }
+
+  /* ===== Revenue View ===== */
+  .period-presets {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    margin-bottom: 14px;
+  }
+  .period-presets::-webkit-scrollbar { display: none; }
+
+  .period-btn {
+    flex-shrink: 0;
+    padding: 9px 16px;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    background: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s;
+  }
+  .period-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  .custom-range {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .custom-range .form-label { font-size: 12px; margin-bottom: 5px; }
+  .custom-range .form-input  { padding: 10px 12px; font-size: 14px; }
+
+  .rev-summary-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 20px;
+    padding: 22px 22px 18px;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .rev-summary-period {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.75;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+  .rev-summary-label {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 2px;
+  }
+  .rev-summary-amount {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .rev-summary-sub {
+    font-size: 12px;
+    opacity: 0.72;
+    font-weight: 500;
+  }
+
+  .rev-mini-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .rev-mini-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 14px;
+    border: 1px solid var(--border);
+  }
+  .rev-mini-icon { font-size: 20px; margin-bottom: 6px; }
+  .rev-mini-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 3px;
+  }
+  .rev-mini-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .rev-mini-amount.green { color: var(--success); }
+  .rev-mini-amount.red   { color: var(--danger); }
+  .rev-mini-amount.blue  { color: #0369a1; }
+  .rev-mini-sub {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  .rev-section {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .rev-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .source-bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .source-bar-item { }
+  .source-bar-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .source-bar-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .source-bar-amount {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .source-bar-count {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-left: 4px;
+  }
+  .bar-track {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+  }
+  .bar-fill.facebook { background: #2563eb; }
+  .bar-fill.booking  { background: #0369a1; }
+  .bar-fill.phone    { background: var(--primary); }
+  .bar-fill.walkin   { background: var(--accent-dark); }
+
+  .room-rev-list { display: flex; flex-direction: column; gap: 10px; }
+  .room-rev-row { }
+  .room-rev-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .room-rev-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .room-rev-amount {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .room-rev-nights {
+    font-size: 10px;
+    color: var(--text-light);
+    margin-left: 3px;
+  }
+
+  .rev-booking-list { display: flex; flex-direction: column; gap: 8px; }
+  .rev-booking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .rev-booking-item:active { transform: scale(0.98); }
+  .rev-booking-left { min-width: 0; flex: 1; }
+  .rev-booking-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rev-booking-info {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+  .rev-booking-right { text-align: right; flex-shrink: 0; }
+  .rev-booking-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .rev-booking-paid {
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .rev-booking-paid.paid    { color: var(--success); }
+  .rev-booking-paid.partial { color: var(--warning); }
+  .rev-booking-paid.unpaid  { color: var(--danger); }
+
+  .rev-empty {
+    text-align: center;
+    padding: 40px 0 20px;
+    color: var(--text-light);
+  }
+  .rev-empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .rev-empty-text { font-size: 15px; font-weight: 600; }
+
+  .rev-view-bottom { margin-bottom: 100px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-content">
+    <div class="header-top">
+      <div class="header-text">
+        <div class="resort-name">นรดีฮิวล์ รีสอร์ท</div>
+        <div class="resort-tagline">ระบบจัดการการจองที่พัก</div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="openSettings()" title="ตั้งค่า">⚙️</button>
+      </div>
+    </div>
+    <div class="sync-status" id="syncStatus">
+      <span class="sync-dot offline" id="syncDot"></span>
+      <span id="syncText">ออฟไลน์ - แตะ ⚙️ เพื่อเปิด Cloud Sync</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number" id="statToday">0</div>
+        <div class="stat-label">วันนี้</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statUpcoming">0</div>
+        <div class="stat-label">กำลังจะมา</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statTotal">0</div>
+        <div class="stat-label">ทั้งหมด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- View Toggle -->
+  <div class="view-toggle">
+    <button class="view-btn active" data-view="list" onclick="setView('list')">📋 รายการ</button>
+    <button class="view-btn" data-view="calendar" onclick="setView('calendar')">📅 ปฏิทิน</button>
+    <button class="view-btn" data-view="revenue" onclick="setView('revenue')">💰 รายได้</button>
+  </div>
+
+  <!-- List View -->
+  <div id="listView">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, เบอร์โทร...">
+    </div>
+
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab active" data-filter="all">ทั้งหมด</button>
+      <button class="filter-tab" data-filter="today">วันนี้</button>
+      <button class="filter-tab" data-filter="upcoming">กำลังจะมา</button>
+      <button class="filter-tab" data-filter="checkedin">เช็คอินแล้ว</button>
+      <button class="filter-tab" data-filter="completed">เสร็จสิ้น</button>
+    </div>
+
+    <div class="section-title">
+      <span class="section-title-bar"></span>
+      <span>รายการจอง</span>
+    </div>
+
+    <div class="booking-list" id="bookingList"></div>
+  </div>
+
+  <!-- Calendar View -->
+  <div id="calendarView" style="display:none">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrevMonth()">‹</button>
+      <div class="cal-month-title" id="calMonthTitle"></div>
+      <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
+    </div>
+
+    <div class="cal-dow-row">
+      <div class="cal-dow-cell wd-sun">อา</div>
+      <div class="cal-dow-cell">จ</div>
+      <div class="cal-dow-cell">อ</div>
+      <div class="cal-dow-cell">พ</div>
+      <div class="cal-dow-cell">พฤ</div>
+      <div class="cal-dow-cell wd-sat">ศ</div>
+      <div class="cal-dow-cell wd-sat">ส</div>
+    </div>
+
+    <div class="cal-grid" id="calGrid"></div>
+
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-dot low"></div>มีบางห้อง</div>
+      <div class="legend-item"><div class="legend-dot mid"></div>เกินครึ่ง</div>
+      <div class="legend-item"><div class="legend-dot high"></div>เหลือน้อย</div>
+      <div class="legend-item"><div class="legend-dot full"></div>เต็มทุกห้อง</div>
+    </div>
+  </div>
+
+  <!-- Revenue View -->
+  <div id="revenueView" style="display:none">
+    <div class="period-presets" id="periodPresets">
+      <button class="period-btn active" data-period="month"     onclick="setPeriod('month')">เดือนนี้</button>
+      <button class="period-btn"        data-period="lastmonth" onclick="setPeriod('lastmonth')">เดือนที่แล้ว</button>
+      <button class="period-btn"        data-period="week"      onclick="setPeriod('week')">สัปดาห์นี้</button>
+      <button class="period-btn"        data-period="today"     onclick="setPeriod('today')">วันนี้</button>
+      <button class="period-btn"        data-period="year"      onclick="setPeriod('year')">ปีนี้</button>
+      <button class="period-btn"        data-period="custom"    onclick="setPeriod('custom')">กำหนดเอง ▾</button>
+    </div>
+
+    <div id="customRangeRow" style="display:none" class="custom-range">
+      <div>
+        <div class="form-label">จากวันที่</div>
+        <input type="date" class="form-input" id="revStartDate" onchange="applyCustomRange()">
+      </div>
+      <div>
+        <div class="form-label">ถึงวันที่</div>
+        <input type="date" class="form-input" id="revEndDate" onchange="applyCustomRange()">
+      </div>
+    </div>
+
+    <div id="revenueContent"></div>
+    <div class="rev-view-bottom"></div>
+  </div>
+</div>
+
+<button class="fab" onclick="openModal()">
+  <span class="fab-icon">+</span>
+  <span>เพิ่มการจอง</span>
+</button>
+
+<!-- Day Detail Modal -->
+<div class="day-detail-overlay" id="dayDetailOverlay">
+  <div class="day-detail-modal">
+    <div class="day-detail-header">
+      <div>
+        <div class="day-detail-title" id="dayDetailTitle"></div>
+        <div id="dayDetailAvail" style="margin-top:6px"></div>
+      </div>
+      <button class="modal-close" onclick="closeDay()">✕</button>
+    </div>
+    <div class="day-detail-body">
+      <div id="dayDetailRooms"></div>
+      <div class="day-section-label" id="dayDetailBookingLabel"></div>
+      <div id="dayDetailBookings"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">เพิ่มการจองใหม่</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="bookingForm" onsubmit="saveBooking(event)">
+        <input type="hidden" id="bookingId">
+
+        <div class="form-group">
+          <label class="form-label">ช่องทางการจอง</label>
+          <div class="source-selector" id="sourceSelector">
+            <div class="source-option" data-source="facebook">
+              <div class="source-option-icon">📘</div>
+              <div class="source-option-label">Facebook</div>
+            </div>
+            <div class="source-option" data-source="booking">
+              <div class="source-option-icon">🌐</div>
+              <div class="source-option-label">Booking.com</div>
+            </div>
+            <div class="source-option" data-source="phone">
+              <div class="source-option-icon">📞</div>
+              <div class="source-option-label">โทรศัพท์</div>
+            </div>
+            <div class="source-option" data-source="walkin">
+              <div class="source-option-icon">🚶</div>
+              <div class="source-option-label">Walk-in / อื่นๆ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ชื่อผู้จอง *</label>
+          <input type="text" class="form-input" id="guestName" required placeholder="คุณ...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">เบอร์โทรศัพท์</label>
+          <input type="tel" class="form-input" id="guestPhone" placeholder="08X-XXX-XXXX">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">เช็คอิน *</label>
+            <input type="date" class="form-input" id="checkIn" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">เช็คเอาท์ *</label>
+            <input type="date" class="form-input" id="checkOut" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">จำนวนผู้เข้าพัก</label>
+          <input type="number" class="form-input" id="guests" min="1" value="2">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">เลือกที่พัก *</label>
+
+          <div class="room-category">โดมขนาดเล็ก</div>
+          <div class="room-grid" id="smallDomes"></div>
+
+          <div class="room-category">โดมขนาดใหญ่</div>
+          <div class="room-grid" id="bigDome"></div>
+
+          <div class="room-category">บ้านพัก</div>
+          <div class="room-grid" id="houses"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">💰 การชำระเงิน</label>
+          <div class="payment-box">
+            <div class="payment-calc empty" id="paymentCalc">เลือกที่พักเพื่อคำนวณราคา</div>
+
+            <div class="form-row" style="margin-top: 14px; margin-bottom: 0;">
+              <div>
+                <label class="payment-label">ราคารวม (บาท)</label>
+                <input type="number" class="form-input" id="price" min="0" placeholder="0" oninput="markPriceManual(); updateRemaining()">
+              </div>
+              <div>
+                <label class="payment-label">จ่ายแล้ว (บาท)</label>
+                <input type="number" class="form-input" id="paid" min="0" placeholder="0" oninput="updateRemaining()">
+              </div>
+            </div>
+
+            <div class="remaining-display unpaid" id="remainingDisplay">
+              <span>คงเหลือ</span>
+              <span id="remainingAmount">฿0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">หมายเหตุ</label>
+          <textarea class="form-textarea" id="notes" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">บันทึกการจอง</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">ตั้งค่า</div>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">
+        <span class="section-title-bar"></span>
+        <span>💰 ราคาที่พัก (ต่อคืน)</span>
+      </div>
+
+      <div class="info-box">
+        <strong>ตั้งราคาที่พักเริ่มต้น</strong>
+        ราคาเหล่านี้จะใช้คำนวณยอดรวมเมื่อเพิ่มการจอง สามารถปรับราคาในแต่ละการจองได้ตามต้องการ
+      </div>
+
+      <div id="priceSettingsList"></div>
+
+      <button class="btn-submit" onclick="saveRoomPrices()">บันทึกราคา</button>
+
+      <div style="height: 28px;"></div>
+
+      <div class="section-title">
+        <span class="section-title-bar"></span>
+        <span>☁️ Cloud Sync</span>
+      </div>
+
+      <div class="info-box">
+        <strong>ข้อมูลออนไลน์ สำรองอัตโนมัติ</strong>
+        เมื่อตั้งค่าเสร็จ ข้อมูลการจองจะถูกเก็บไว้บนคลาวด์ฟรี (Firebase) สามารถเปิดใช้งานได้จากหลายเครื่อง ข้อมูลซิงก์อัตโนมัติแบบเรียลไทม์
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Firebase Database URL</label>
+        <input type="text" class="form-input" id="firebaseUrl" placeholder="https://xxx-default-rtdb.firebaseio.com">
+      </div>
+
+      <button class="btn-submit" onclick="saveFirebaseConfig()">บันทึกและเชื่อมต่อ</button>
+
+      <button class="btn-secondary" onclick="disableSync()" id="disableBtn" style="display:none;">ปิด Cloud Sync</button>
+
+      <div style="height: 20px;"></div>
+
+      <div class="section-title">
+        <span class="section-title-bar"></span>
+        <span>วิธีตั้งค่า Firebase (5 นาที ฟรี)</span>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-title"><span class="setup-step-num">1</span>เปิด Firebase Console</div>
+        <div class="setup-step-desc">ไปที่ <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> แล้วเข้าสู่ระบบด้วย Google Account</div>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-title"><span class="setup-step-num">2</span>สร้างโปรเจค</div>
+        <div class="setup-step-desc">คลิก "Add project" → ตั้งชื่อ เช่น "naradee-resort" → กด Continue → ปิด Google Analytics → Create project</div>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-title"><span class="setup-step-num">3</span>สร้าง Realtime Database</div>
+        <div class="setup-step-desc">เมนูซ้าย → Build → Realtime Database → Create Database → เลือก Singapore → Start in test mode → Enable</div>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-title"><span class="setup-step-num">4</span>คัดลอก URL</div>
+        <div class="setup-step-desc">หน้า Database จะแสดง URL ที่ขึ้นต้นด้วย <code>https://xxx-default-rtdb.firebaseio.com</code> ให้คัดลอกมาวางในช่องด้านบน</div>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-title"><span class="setup-step-num">5</span>เสร็จสิ้น</div>
+        <div class="setup-step-desc">กดปุ่ม "บันทึกและเชื่อมต่อ" ข้อมูลจะถูกซิงก์ออนไลน์ทันที สามารถเปิดแอปนี้จากมือถือ/คอมเครื่องอื่น และใช้ URL เดียวกัน เพื่อดูข้อมูลร่วมกัน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // Room definitions
+  const ROOMS = {
+    smallDomes: [
+      { id: 'sd1', name: 'โดมเล็ก 1', icon: '⛺' },
+      { id: 'sd2', name: 'โดมเล็ก 2', icon: '⛺' },
+      { id: 'sd3', name: 'โดมเล็ก 3', icon: '⛺' },
+      { id: 'sd4', name: 'โดมเล็ก 4', icon: '⛺' },
+      { id: 'sd5', name: 'โดมเล็ก 5', icon: '⛺' },
+    ],
+    bigDome: [
+      { id: 'bd1', name: 'โดมใหญ่', icon: '🏕️' },
+    ],
+    houses: [
+      { id: 'h1', name: 'ชมจันทร์', icon: '🏡' },
+      { id: 'h2', name: 'ไออรุณ', icon: '🏡' },
+      { id: 'h3', name: 'อุ่นรัก', icon: '🏡' },
+    ]
+  };
+
+  const ALL_ROOMS = [...ROOMS.smallDomes, ...ROOMS.bigDome, ...ROOMS.houses];
+
+  const DEFAULT_PRICES = {
+    sd1: { weekday: 1500, weekend: 1800 },
+    sd2: { weekday: 1500, weekend: 1800 },
+    sd3: { weekday: 1500, weekend: 1800 },
+    sd4: { weekday: 1500, weekend: 1800 },
+    sd5: { weekday: 1500, weekend: 1800 },
+    bd1: { weekday: 3500, weekend: 4200 },
+    h1: { weekday: 2500, weekend: 3000 },
+    h2: { weekday: 2500, weekend: 3000 },
+    h3: { weekday: 2500, weekend: 3000 },
+  };
+
+  // Normalize a single room price (handles legacy number format)
+  function normalizePrice(p) {
+    if (typeof p === 'number') return { weekday: p, weekend: p };
+    if (p && typeof p === 'object') {
+      const wd = parseFloat(p.weekday) || 0;
+      const we = parseFloat(p.weekend);
+      return { weekday: wd, weekend: isNaN(we) ? wd : we };
+    }
+    return { weekday: 0, weekend: 0 };
+  }
+
+  // Merge defaults with overrides, normalizing each room price
+  function mergeRoomPrices(defaults, override) {
+    const result = {};
+    const merged = { ...defaults, ...(override || {}) };
+    for (const key in merged) {
+      result[key] = normalizePrice(merged[key]);
+    }
+    return result;
+  }
+
+  // Count weekday vs weekend nights between two dates.
+  // Weekend nights = Friday and Saturday nights (i.e., the night when the
+  // calendar day is Friday or Saturday).
+  function countNights(checkIn, checkOut) {
+    if (!checkIn || !checkOut) return { weekday: 0, weekend: 0 };
+    let weekday = 0, weekend = 0;
+    const cur = new Date(checkIn);
+    const end = new Date(checkOut);
+    while (cur < end) {
+      const day = cur.getDay(); // 0=Sun, 5=Fri, 6=Sat
+      if (day === 5 || day === 6) weekend++;
+      else weekday++;
+      cur.setDate(cur.getDate() + 1);
+    }
+    return { weekday, weekend };
+  }
+
+  const SOURCE_LABELS = {
+    facebook: { label: 'Facebook', class: 'source-facebook', icon: '📘' },
+    booking: { label: 'Booking', class: 'source-booking', icon: '🌐' },
+    phone: { label: 'โทรศัพท์', class: 'source-phone', icon: '📞' },
+    walkin: { label: 'Walk-in', class: 'source-walkin', icon: '🚶' },
+  };
+
+  let bookings = [];
+  let roomPrices = mergeRoomPrices(DEFAULT_PRICES, {});
+  let currentFilter = 'all';
+  let selectedSource = 'phone';
+  let selectedRooms = [];
+  let editingId = null;
+  let searchQuery = '';
+  let priceManuallyEdited = false;
+  let isHandlingPopstate = false;
+  let currentView = 'list';
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth();
+  const TOTAL_ROOMS = ALL_ROOMS.length; // 9
+  const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+    'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const THAI_MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.',
+    'ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const THAI_DAYS = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  const DOT_COLORS = { facebook:'dot-facebook', booking:'dot-booking', phone:'dot-phone', walkin:'dot-walkin' };
+  let firebaseApp = null;
+  let firebaseDb = null;
+  let firebaseRef = null;
+  let pricesRef = null;
+  let isSyncing = false;
+  let dbUrl = localStorage.getItem('naradee_firebase_url') || '';
+
+  // ============ STORAGE LAYER ============
+  function loadFromLocal() {
+    const data = localStorage.getItem('naradee_bookings');
+    bookings = data ? JSON.parse(data) : [];
+  }
+
+  function saveToLocal() {
+    localStorage.setItem('naradee_bookings', JSON.stringify(bookings));
+  }
+
+  function loadRoomPrices() {
+    const data = localStorage.getItem('naradee_room_prices');
+    if (data) {
+      try {
+        roomPrices = mergeRoomPrices(DEFAULT_PRICES, JSON.parse(data));
+      } catch (e) {
+        roomPrices = mergeRoomPrices(DEFAULT_PRICES, {});
+      }
+    } else {
+      roomPrices = mergeRoomPrices(DEFAULT_PRICES, {});
+    }
+  }
+
+  function saveRoomPricesLocal() {
+    localStorage.setItem('naradee_room_prices', JSON.stringify(roomPrices));
+  }
+
+  async function saveRoomPrices() {
+    ALL_ROOMS.forEach(room => {
+      const wd = document.getElementById('price-wd-' + room.id);
+      const we = document.getElementById('price-we-' + room.id);
+      if (wd && we) {
+        roomPrices[room.id] = {
+          weekday: parseFloat(wd.value) || 0,
+          weekend: parseFloat(we.value) || 0,
+        };
+      }
+    });
+    saveRoomPricesLocal();
+
+    if (firebaseDb) {
+      try {
+        await firebaseDb.ref('roomPrices').set(roomPrices);
+      } catch (e) {
+        console.error('Failed to sync prices', e);
+      }
+    }
+    updateCalculatedPrice();
+    showToast('บันทึกราคาเรียบร้อย');
+  }
+
+  function setSyncStatus(state, message) {
+    const dot = document.getElementById('syncDot');
+    const text = document.getElementById('syncText');
+    dot.className = 'sync-dot ' + state;
+    text.textContent = message;
+  }
+
+  function initFirebase() {
+    if (!dbUrl) {
+      setSyncStatus('offline', 'ออฟไลน์ - แตะ ⚙️ เพื่อเปิด Cloud Sync');
+      return false;
+    }
+    try {
+      if (firebaseApp) {
+        firebaseApp.delete();
+      }
+      firebaseApp = firebase.initializeApp({ databaseURL: dbUrl }, 'app-' + Date.now());
+      firebaseDb = firebase.database(firebaseApp);
+      firebaseRef = firebaseDb.ref('bookings');
+      pricesRef = firebaseDb.ref('roomPrices');
+
+      setSyncStatus('syncing', 'กำลังเชื่อมต่อคลาวด์...');
+
+      firebaseRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        bookings = data ? Object.values(data) : [];
+        saveToLocal();
+        render();
+        setSyncStatus('online', '☁️ ซิงก์ออนไลน์แล้ว');
+      }, (error) => {
+        console.error('Firebase error:', error);
+        setSyncStatus('offline', '⚠️ เชื่อมต่อไม่สำเร็จ - ใช้งานออฟไลน์');
+      });
+
+      pricesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          roomPrices = mergeRoomPrices(DEFAULT_PRICES, data);
+          saveRoomPricesLocal();
+          renderPriceSettings();
+          updateCalculatedPrice();
+          render();
+        }
+      });
+
+      return true;
+    } catch (e) {
+      console.error('Firebase init failed', e);
+      setSyncStatus('offline', '⚠️ เชื่อมต่อไม่สำเร็จ');
+      return false;
+    }
+  }
+
+  async function saveBookingData(booking) {
+    // Update local first
+    const idx = bookings.findIndex(b => b.id === booking.id);
+    if (idx >= 0) bookings[idx] = booking;
+    else bookings.push(booking);
+    saveToLocal();
+
+    // Sync to cloud
+    if (firebaseRef) {
+      try {
+        await firebaseRef.child(booking.id).set(booking);
+      } catch (e) {
+        console.error('Cloud save failed', e);
+        showToast('⚠️ ซิงก์คลาวด์ไม่สำเร็จ - บันทึกในเครื่องแล้ว');
+      }
+    }
+  }
+
+  async function deleteBookingData(id) {
+    bookings = bookings.filter(b => b.id !== id);
+    saveToLocal();
+
+    if (firebaseRef) {
+      try {
+        await firebaseRef.child(id).remove();
+      } catch (e) {
+        console.error('Cloud delete failed', e);
+      }
+    }
+  }
+
+  // ============ SETTINGS ============
+  function renderPriceSettings() {
+    const container = document.getElementById('priceSettingsList');
+    if (!container) return;
+    const sections = [
+      { title: 'โดมขนาดเล็ก', rooms: ROOMS.smallDomes },
+      { title: 'โดมขนาดใหญ่', rooms: ROOMS.bigDome },
+      { title: 'บ้านพัก', rooms: ROOMS.houses },
+    ];
+    container.innerHTML = `
+      <div class="price-header-row">
+        <div></div>
+        <div class="price-col-label">วันธรรมดา<br><span>อา-พฤ</span></div>
+        <div class="price-col-label weekend">วันหยุด<br><span>ศ-ส</span></div>
+      </div>
+      ${sections.map(s => `
+        <div class="room-category">${s.title}</div>
+        ${s.rooms.map(r => {
+          const p = roomPrices[r.id] || { weekday: 0, weekend: 0 };
+          return `
+            <div class="price-row-mini">
+              <div class="price-room-label">${r.icon} ${escapeHtml(r.name)}</div>
+              <input type="number" class="price-input-mini" id="price-wd-${r.id}" value="${p.weekday}" min="0" placeholder="0">
+              <input type="number" class="price-input-mini weekend" id="price-we-${r.id}" value="${p.weekend}" min="0" placeholder="0">
+            </div>
+          `;
+        }).join('')}
+      `).join('')}
+    `;
+  }
+
+  function openSettings() {
+    document.getElementById('firebaseUrl').value = dbUrl;
+    document.getElementById('disableBtn').style.display = dbUrl ? 'block' : 'none';
+    renderPriceSettings();
+    document.getElementById('settingsOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    history.pushState({modal: 'settings'}, '');
+  }
+
+  function closeSettings() {
+    const wasActive = document.getElementById('settingsOverlay').classList.contains('active');
+    document.getElementById('settingsOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    if (wasActive && !isHandlingPopstate) {
+      history.back();
+    }
+  }
+
+  function saveFirebaseConfig() {
+    let url = document.getElementById('firebaseUrl').value.trim();
+    if (!url) {
+      showToast('กรุณากรอก Firebase URL');
+      return;
+    }
+    // Clean URL
+    url = url.replace(/\/$/, '');
+    if (!url.includes('firebaseio.com') && !url.includes('firebasedatabase.app')) {
+      showToast('URL ไม่ถูกต้อง - ต้องเป็น Firebase Database URL');
+      return;
+    }
+    dbUrl = url;
+    localStorage.setItem('naradee_firebase_url', url);
+    showToast('กำลังเชื่อมต่อ...');
+    if (initFirebase()) {
+      closeSettings();
+    }
+  }
+
+  function disableSync() {
+    if (!confirm('ปิด Cloud Sync? ข้อมูลในเครื่องจะยังอยู่')) return;
+    if (firebaseRef) {
+      firebaseRef.off();
+      firebaseRef = null;
+    }
+    if (pricesRef) {
+      pricesRef.off();
+      pricesRef = null;
+    }
+    if (firebaseApp) {
+      firebaseApp.delete();
+      firebaseApp = null;
+    }
+    dbUrl = '';
+    localStorage.removeItem('naradee_firebase_url');
+    setSyncStatus('offline', 'ออฟไลน์ - แตะ ⚙️ เพื่อเปิด Cloud Sync');
+    closeSettings();
+    showToast('ปิด Cloud Sync แล้ว');
+  }
+
+  // ============ UI HELPERS ============
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const days = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+    const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+  }
+
+  function calcNights(checkIn, checkOut) {
+    const ci = new Date(checkIn);
+    const co = new Date(checkOut);
+    const diff = Math.ceil((co - ci) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 1;
+  }
+
+  function getToday() {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+  }
+
+  function getStatus(booking) {
+    const today = getToday();
+    if (booking.status === 'completed') return 'completed';
+    if (booking.status === 'checkedin') return 'checkedin';
+    if (booking.checkOut < today) return 'completed';
+    return 'pending';
+  }
+
+  function renderRoomOptions() {
+    const renderGroup = (containerId, rooms) => {
+      const container = document.getElementById(containerId);
+      container.innerHTML = rooms.map(room => `
+        <div class="room-option" data-room="${room.id}" onclick="toggleRoom('${room.id}')">
+          <div class="room-option-icon">${room.icon}</div>
+          <div class="room-option-name">${room.name}</div>
+        </div>
+      `).join('');
+    };
+    renderGroup('smallDomes', ROOMS.smallDomes);
+    renderGroup('bigDome', ROOMS.bigDome);
+    renderGroup('houses', ROOMS.houses);
+  }
+
+  function toggleRoom(roomId) {
+    const idx = selectedRooms.indexOf(roomId);
+    if (idx >= 0) selectedRooms.splice(idx, 1);
+    else selectedRooms.push(roomId);
+    updateRoomUI();
+    updateCalculatedPrice();
+  }
+
+  function updateRoomUI() {
+    document.querySelectorAll('.room-option').forEach(el => {
+      el.classList.toggle('selected', selectedRooms.includes(el.dataset.room));
+    });
+  }
+
+  function calculateTotalPrice(rooms, checkIn, checkOut) {
+    if (!rooms || !rooms.length || !checkIn || !checkOut) return 0;
+    const { weekday, weekend } = countNights(checkIn, checkOut);
+    return rooms.reduce((sum, id) => {
+      const p = roomPrices[id] || { weekday: 0, weekend: 0 };
+      return sum + (p.weekday * weekday) + (p.weekend * weekend);
+    }, 0);
+  }
+
+  function markPriceManual() {
+    priceManuallyEdited = true;
+  }
+
+  function updateCalculatedPrice() {
+    const checkIn = document.getElementById('checkIn').value;
+    const checkOut = document.getElementById('checkOut').value;
+    if (!checkIn || !checkOut) return;
+    const { weekday: wdNights, weekend: weNights } = countNights(checkIn, checkOut);
+    const totalNights = wdNights + weNights;
+    const calculated = calculateTotalPrice(selectedRooms, checkIn, checkOut);
+    const calcEl = document.getElementById('paymentCalc');
+
+    if (selectedRooms.length === 0) {
+      calcEl.classList.add('empty');
+      calcEl.textContent = 'เลือกที่พักเพื่อคำนวณราคา';
+    } else {
+      calcEl.classList.remove('empty');
+      const lines = selectedRooms.map(id => {
+        const room = ALL_ROOMS.find(r => r.id === id);
+        const p = roomPrices[id] || { weekday: 0, weekend: 0 };
+        const parts = [];
+        if (wdNights > 0) parts.push(`฿${p.weekday.toLocaleString()}×${wdNights}`);
+        if (weNights > 0) parts.push(`฿${p.weekend.toLocaleString()}×${weNights}`);
+        return `${room.name}: ${parts.join(' + ')}`;
+      }).join('<br>');
+      const summary = [];
+      if (wdNights > 0) summary.push(`${wdNights} คืนธรรมดา`);
+      if (weNights > 0) summary.push(`${weNights} คืนหยุด`);
+      calcEl.innerHTML = `${lines}<br><strong>${summary.join(' + ')} = ฿${calculated.toLocaleString()}</strong>`;
+    }
+
+    const priceInput = document.getElementById('price');
+    if (!priceManuallyEdited) {
+      priceInput.value = calculated || '';
+    }
+    updateRemaining();
+  }
+
+  function updateRemaining() {
+    const total = parseFloat(document.getElementById('price').value) || 0;
+    const paid = parseFloat(document.getElementById('paid').value) || 0;
+    const remaining = total - paid;
+    const display = document.getElementById('remainingDisplay');
+    const amount = document.getElementById('remainingAmount');
+
+    display.classList.remove('paid', 'partial', 'unpaid');
+    if (total > 0 && paid >= total) {
+      display.classList.add('paid');
+      amount.textContent = '✓ ชำระครบ';
+    } else if (paid > 0 && paid < total) {
+      display.classList.add('partial');
+      amount.textContent = '฿' + remaining.toLocaleString();
+    } else {
+      display.classList.add('unpaid');
+      amount.textContent = '฿' + (total || 0).toLocaleString();
+    }
+  }
+
+  function selectSource(source) {
+    selectedSource = source;
+    document.querySelectorAll('.source-option').forEach(el => {
+      el.classList.toggle('selected', el.dataset.source === source);
+    });
+  }
+
+  function openModal(booking = null) {
+    const modal = document.getElementById('modalOverlay');
+    const title = document.getElementById('modalTitle');
+    document.getElementById('bookingForm').reset();
+    selectedRooms = [];
+    priceManuallyEdited = false;
+
+    if (booking) {
+      editingId = booking.id;
+      title.textContent = 'แก้ไขการจอง';
+      document.getElementById('bookingId').value = booking.id;
+      document.getElementById('guestName').value = booking.guestName;
+      document.getElementById('guestPhone').value = booking.guestPhone || '';
+      document.getElementById('checkIn').value = booking.checkIn;
+      document.getElementById('checkOut').value = booking.checkOut;
+      document.getElementById('guests').value = booking.guests || 2;
+      document.getElementById('price').value = booking.price || '';
+      document.getElementById('paid').value = booking.paid || '';
+      document.getElementById('notes').value = booking.notes || '';
+      selectSource(booking.source);
+      selectedRooms = [...(booking.rooms || [])];
+      priceManuallyEdited = true;
+    } else {
+      editingId = null;
+      title.textContent = 'เพิ่มการจองใหม่';
+      document.getElementById('checkIn').value = getToday();
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      document.getElementById('checkOut').value = tomorrow.toISOString().split('T')[0];
+      document.getElementById('paid').value = '';
+      selectSource('phone');
+    }
+
+    updateRoomUI();
+    updateCalculatedPrice();
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    history.pushState({modal: 'booking'}, '');
+  }
+
+  function closeModal() {
+    const wasActive = document.getElementById('modalOverlay').classList.contains('active');
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    editingId = null;
+    if (wasActive && !isHandlingPopstate) {
+      history.back();
+    }
+  }
+
+  async function saveBooking(e) {
+    e.preventDefault();
+
+    if (selectedRooms.length === 0) {
+      showToast('กรุณาเลือกที่พัก');
+      return;
+    }
+
+    const existing = editingId ? bookings.find(b => b.id === editingId) : null;
+    const booking = {
+      id: editingId || Date.now().toString(),
+      source: selectedSource,
+      guestName: document.getElementById('guestName').value.trim(),
+      guestPhone: document.getElementById('guestPhone').value.trim(),
+      checkIn: document.getElementById('checkIn').value,
+      checkOut: document.getElementById('checkOut').value,
+      guests: parseInt(document.getElementById('guests').value) || 1,
+      price: parseFloat(document.getElementById('price').value) || 0,
+      paid: parseFloat(document.getElementById('paid').value) || 0,
+      rooms: [...selectedRooms],
+      notes: document.getElementById('notes').value.trim(),
+      status: existing?.status || 'pending',
+      createdAt: existing?.createdAt || Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    await saveBookingData(booking);
+    showToast(editingId ? 'แก้ไขการจองเรียบร้อย' : 'บันทึกการจองเรียบร้อย');
+    closeModal();
+    render();
+  }
+
+  async function deleteBooking(id) {
+    if (confirm('ต้องการลบการจองนี้ใช่หรือไม่?')) {
+      await deleteBookingData(id);
+      render();
+      showToast('ลบการจองแล้ว');
+    }
+  }
+
+  function editBooking(id) {
+    const booking = bookings.find(b => b.id === id);
+    if (booking) openModal(booking);
+  }
+
+  async function toggleStatus(id) {
+    const booking = bookings.find(b => b.id === id);
+    if (!booking) return;
+
+    const current = getStatus(booking);
+    if (current === 'pending') {
+      booking.status = 'checkedin';
+      showToast('เช็คอินแล้ว');
+    } else if (current === 'checkedin') {
+      booking.status = 'completed';
+      showToast('เช็คเอาท์เรียบร้อย');
+    } else {
+      booking.status = 'pending';
+      showToast('คืนสถานะรอเช็คอิน');
+    }
+    booking.updatedAt = Date.now();
+    await saveBookingData(booking);
+    render();
+  }
+
+  function getRoomNames(roomIds) {
+    return (roomIds || []).map(id => ALL_ROOMS.find(r => r.id === id)?.name || id);
+  }
+
+  function filterBookings() {
+    const today = getToday();
+    let filtered = [...bookings];
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(b =>
+        b.guestName.toLowerCase().includes(q) ||
+        (b.guestPhone || '').includes(q)
+      );
+    }
+
+    switch (currentFilter) {
+      case 'today':
+        filtered = filtered.filter(b => b.checkIn === today);
+        break;
+      case 'upcoming':
+        filtered = filtered.filter(b => b.checkIn > today && getStatus(b) !== 'completed');
+        break;
+      case 'checkedin':
+        filtered = filtered.filter(b => getStatus(b) === 'checkedin');
+        break;
+      case 'completed':
+        filtered = filtered.filter(b => getStatus(b) === 'completed');
+        break;
+    }
+
+    return filtered.sort((a, b) => {
+      const sa = getStatus(a);
+      const sb = getStatus(b);
+      if (sa === 'completed' && sb !== 'completed') return 1;
+      if (sa !== 'completed' && sb === 'completed') return -1;
+      return a.checkIn.localeCompare(b.checkIn);
+    });
+  }
+
+  function updateStats() {
+    const today = getToday();
+    document.getElementById('statToday').textContent =
+      bookings.filter(b => b.checkIn === today).length;
+    document.getElementById('statUpcoming').textContent =
+      bookings.filter(b => b.checkIn > today && getStatus(b) !== 'completed').length;
+    document.getElementById('statTotal').textContent = bookings.length;
+  }
+
+  // ============ REVENUE ============
+  let revPeriod = 'month';
+  let revCustomStart = '';
+  let revCustomEnd = '';
+
+  function getPeriodDates(period) {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = today.getMonth();
+    const d = today.getDate();
+    const fmt = dt => dt.toISOString().split('T')[0];
+    switch (period) {
+      case 'today':
+        return { start: fmt(today), end: fmt(today) };
+      case 'week': {
+        const dow = today.getDay();
+        const mon = new Date(today);
+        mon.setDate(d - (dow === 0 ? 6 : dow - 1));
+        const sun = new Date(mon);
+        sun.setDate(mon.getDate() + 6);
+        return { start: fmt(mon), end: fmt(sun) };
+      }
+      case 'month':
+        return { start: fmt(new Date(y, m, 1)), end: fmt(new Date(y, m + 1, 0)) };
+      case 'lastmonth':
+        return { start: fmt(new Date(y, m - 1, 1)), end: fmt(new Date(y, m, 0)) };
+      case 'year':
+        return { start: fmt(new Date(y, 0, 1)), end: fmt(new Date(y, 11, 31)) };
+      case 'custom':
+        return { start: revCustomStart, end: revCustomEnd };
+      default:
+        return { start: fmt(new Date(y, m, 1)), end: fmt(new Date(y, m + 1, 0)) };
+    }
+  }
+
+  function formatThaiPeriodLabel(period, start, end) {
+    if (!start) return '';
+    const fmtDate = s => {
+      const [y, m, d] = s.split('-');
+      return `${parseInt(d)} ${THAI_MONTHS_SHORT[parseInt(m) - 1]} ${parseInt(y) + 543}`;
+    };
+    if (period === 'today') return fmtDate(start);
+    if (period === 'month') {
+      const [y, m] = start.split('-');
+      return `${THAI_MONTHS[parseInt(m) - 1]} ${parseInt(y) + 543}`;
+    }
+    if (period === 'lastmonth') {
+      const [y, m] = start.split('-');
+      return `${THAI_MONTHS[parseInt(m) - 1]} ${parseInt(y) + 543}`;
+    }
+    if (period === 'year') {
+      return `ปี ${parseInt(start.split('-')[0]) + 543}`;
+    }
+    return `${fmtDate(start)} – ${fmtDate(end)}`;
+  }
+
+  function getRevenueData() {
+    const { start, end } = getPeriodDates(revPeriod);
+    if (!start || !end || start > end) return null;
+
+    const filtered = bookings.filter(b => b.checkIn >= start && b.checkIn <= end);
+    const totalRevenue = filtered.reduce((s, b) => s + (Number(b.price) || 0), 0);
+    const totalPaid    = filtered.reduce((s, b) => s + (Number(b.paid)  || 0), 0);
+
+    // By source
+    const bySource = {};
+    filtered.forEach(b => {
+      const src = b.source || 'phone';
+      if (!bySource[src]) bySource[src] = { count: 0, revenue: 0, paid: 0 };
+      bySource[src].count++;
+      bySource[src].revenue += Number(b.price) || 0;
+      bySource[src].paid    += Number(b.paid)  || 0;
+    });
+
+    // By room (allocate price evenly across rooms in a booking)
+    const byRoom = {};
+    ALL_ROOMS.forEach(r => byRoom[r.id] = { ...r, nightCount: 0, revenue: 0 });
+    filtered.forEach(b => {
+      const rooms = b.rooms || [];
+      if (!rooms.length) return;
+      const perRoom = (Number(b.price) || 0) / rooms.length;
+      const nights  = calcNights(b.checkIn, b.checkOut);
+      rooms.forEach(rid => {
+        if (byRoom[rid]) {
+          byRoom[rid].nightCount += nights;
+          byRoom[rid].revenue    += perRoom;
+        }
+      });
+    });
+
+    return { filtered, start, end, totalRevenue, totalPaid,
+             totalOutstanding: totalRevenue - totalPaid, bySource, byRoom };
+  }
+
+  function setPeriod(p) {
+    revPeriod = p;
+    document.querySelectorAll('.period-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.period === p);
+    });
+    const customRow = document.getElementById('customRangeRow');
+    if (p === 'custom') {
+      customRow.style.display = 'grid';
+      if (!revCustomStart || !revCustomEnd) return; // wait for user to fill
+    } else {
+      customRow.style.display = 'none';
+    }
+    renderRevenue();
+  }
+
+  function applyCustomRange() {
+    revCustomStart = document.getElementById('revStartDate').value;
+    revCustomEnd   = document.getElementById('revEndDate').value;
+    if (revCustomStart && revCustomEnd) renderRevenue();
+  }
+
+  function renderRevenue() {
+    const container = document.getElementById('revenueContent');
+    const data = getRevenueData();
+
+    if (!data || (!data.start && revPeriod === 'custom')) {
+      container.innerHTML = `<div class="rev-empty"><div class="rev-empty-icon">📅</div><div class="rev-empty-text">กรุณาเลือกช่วงวันที่</div></div>`;
+      return;
+    }
+
+    const { filtered, start, end, totalRevenue, totalPaid, totalOutstanding, bySource, byRoom } = data;
+    const periodLabel = formatThaiPeriodLabel(revPeriod, start, end);
+
+    // ── Summary card ──
+    const summaryCard = `
+      <div class="rev-summary-card">
+        <div class="rev-summary-period">${periodLabel}</div>
+        <div class="rev-summary-label">💰 รายได้รวม</div>
+        <div class="rev-summary-amount">฿${totalRevenue.toLocaleString()}</div>
+        <div class="rev-summary-sub">จาก ${filtered.length} การจอง · ${calcTotalNightsInPeriod(filtered)} คืนรวม</div>
+      </div>`;
+
+    // ── Mini cards ──
+    const paidPct = totalRevenue > 0 ? Math.round(totalPaid / totalRevenue * 100) : 0;
+    const miniCards = `
+      <div class="rev-mini-grid">
+        <div class="rev-mini-card">
+          <div class="rev-mini-icon">✅</div>
+          <div class="rev-mini-label">ชำระแล้ว</div>
+          <div class="rev-mini-amount green">฿${totalPaid.toLocaleString()}</div>
+          <div class="rev-mini-sub">${paidPct}% ของทั้งหมด</div>
+        </div>
+        <div class="rev-mini-card">
+          <div class="rev-mini-icon">⏳</div>
+          <div class="rev-mini-label">ยังค้างชำระ</div>
+          <div class="rev-mini-amount ${totalOutstanding > 0 ? 'red' : 'green'}">฿${totalOutstanding.toLocaleString()}</div>
+          <div class="rev-mini-sub">${totalOutstanding > 0 ? (100 - paidPct) + '% ของทั้งหมด' : 'ชำระครบแล้ว'}</div>
+        </div>
+      </div>`;
+
+    // ── Source breakdown ──
+    const maxSrcRev = Math.max(...Object.values(bySource).map(s => s.revenue), 1);
+    const srcRows = Object.entries(bySource)
+      .sort((a, b) => b[1].revenue - a[1].revenue)
+      .map(([key, s]) => {
+        const info = SOURCE_LABELS[key] || SOURCE_LABELS.phone;
+        const pct = Math.round(s.revenue / maxSrcRev * 100);
+        return `
+          <div class="source-bar-item">
+            <div class="source-bar-meta">
+              <div class="source-bar-name">${info.icon} ${info.label}<span class="source-bar-count">(${s.count} ราย)</span></div>
+              <div class="source-bar-amount">฿${s.revenue.toLocaleString()}</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill ${key}" style="width:${pct}%"></div></div>
+          </div>`;
+      }).join('');
+
+    const sourceSection = filtered.length === 0 ? '' : `
+      <div class="rev-section">
+        <div class="rev-section-title">📊 แหล่งการจอง</div>
+        <div class="source-bar-row">${srcRows}</div>
+      </div>`;
+
+    // ── Room breakdown ──
+    const maxRoomRev = Math.max(...Object.values(byRoom).map(r => r.revenue), 1);
+    const roomRows = Object.values(byRoom)
+      .filter(r => r.revenue > 0)
+      .sort((a, b) => b.revenue - a.revenue)
+      .map(r => {
+        const pct = Math.round(r.revenue / maxRoomRev * 100);
+        return `
+          <div class="room-rev-row">
+            <div class="room-rev-meta">
+              <div class="room-rev-name">${r.icon} ${escapeHtml(r.name)}</div>
+              <div class="room-rev-amount">฿${Math.round(r.revenue).toLocaleString()}<span class="room-rev-nights"> ${r.nightCount} คืน</span></div>
+            </div>
+            <div class="bar-track"><div class="bar-fill phone" style="width:${pct}%"></div></div>
+          </div>`;
+      }).join('');
+
+    const roomSection = roomRows ? `
+      <div class="rev-section">
+        <div class="rev-section-title">🏠 รายได้แต่ละห้อง</div>
+        <div class="room-rev-list">${roomRows}</div>
+      </div>` : '';
+
+    // ── Booking list ──
+    const bookingRows = filtered
+      .slice().sort((a, b) => b.checkIn.localeCompare(a.checkIn))
+      .map(b => {
+        const total = Number(b.price) || 0;
+        const paid  = Number(b.paid)  || 0;
+        const rem   = total - paid;
+        let payClass = 'unpaid', payText = 'ยังไม่จ่าย';
+        if (total > 0 && paid >= total) { payClass = 'paid'; payText = '✓ ชำระครบ'; }
+        else if (paid > 0) { payClass = 'partial'; payText = `ค้าง ฿${rem.toLocaleString()}`; }
+        const nights = calcNights(b.checkIn, b.checkOut);
+        const rooms  = getRoomNames(b.rooms).join(', ');
+        const src    = SOURCE_LABELS[b.source] || SOURCE_LABELS.phone;
+        return `
+          <div class="rev-booking-item" data-id="${b.id}" onclick="editFromRevenue(this.dataset.id)">
+            <div class="rev-booking-left">
+              <div class="rev-booking-name">${escapeHtml(b.guestName)}</div>
+              <div class="rev-booking-info">${src.icon} ${formatDate(b.checkIn)} · ${nights} คืน · ${escapeHtml(rooms)}</div>
+            </div>
+            <div class="rev-booking-right">
+              <div class="rev-booking-price">฿${total.toLocaleString()}</div>
+              <div class="rev-booking-paid ${payClass}">${payText}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+    const bookingSection = `
+      <div class="rev-section">
+        <div class="rev-section-title">📋 รายการจอง${filtered.length > 0 ? ` (${filtered.length})` : ''}</div>
+        ${filtered.length > 0
+          ? `<div class="rev-booking-list">${bookingRows}</div>`
+          : `<div class="rev-empty"><div class="rev-empty-icon">📭</div><div class="rev-empty-text">ไม่มีการจองในช่วงนี้</div></div>`}
+      </div>`;
+
+    container.innerHTML = summaryCard + miniCards + sourceSection + roomSection + bookingSection;
+  }
+
+  function calcTotalNightsInPeriod(bkList) {
+    return bkList.reduce((s, b) => s + calcNights(b.checkIn, b.checkOut), 0);
+  }
+
+  function editFromRevenue(id) {
+    const booking = bookings.find(b => b.id === id);
+    if (!booking) return;
+    openModal(booking);
+  }
+
+  // ============ VIEW TOGGLE ============
+  function setView(view) {
+    currentView = view;
+    document.getElementById('listView').style.display = view === 'list' ? '' : 'none';
+    document.getElementById('calendarView').style.display = view === 'calendar' ? '' : 'none';
+    document.getElementById('revenueView').style.display = view === 'revenue' ? '' : 'none';
+    document.querySelectorAll('.view-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    if (view === 'calendar') renderCalendar();
+    if (view === 'revenue') renderRevenue();
+  }
+
+  // ============ CALENDAR ============
+  function getRoomAvailability(dateStr) {
+    const bookedRooms = new Set();
+    const dayBookings = [];
+    bookings.forEach(b => {
+      if (b.checkIn <= dateStr && dateStr < b.checkOut) {
+        (b.rooms || []).forEach(r => bookedRooms.add(r));
+        dayBookings.push(b);
+      }
+    });
+    return {
+      booked: bookedRooms.size,
+      available: TOTAL_ROOMS - bookedRooms.size,
+      bookedRooms,
+      bookings: dayBookings,
+    };
+  }
+
+  function calPrevMonth() {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  }
+
+  function calNextMonth() {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const today = getToday();
+    document.getElementById('calMonthTitle').textContent =
+      `${THAI_MONTHS[calMonth]} ${calYear + 543}`;
+
+    const firstDayOfWeek = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+    let cells = '';
+
+    // Leading empty cells
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      cells += `<div class="cal-cell empty"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const mm = String(calMonth + 1).padStart(2, '0');
+      const dd = String(d).padStart(2, '0');
+      const dateStr = `${calYear}-${mm}-${dd}`;
+      const dayOfWeek = (firstDayOfWeek + d - 1) % 7; // 0=Sun,6=Sat
+      const isSun = dayOfWeek === 0;
+      const isSat = dayOfWeek === 6;
+      const isFri = dayOfWeek === 5;
+      const isToday = dateStr === today;
+      const isPast = dateStr < today;
+      const { booked, available, bookings: dayBookings } = getRoomAvailability(dateStr);
+
+      let cellClass = 'cal-cell';
+      let availText = '';
+      let availClass = '';
+
+      if (isPast) cellClass += ' past';
+      if (isToday) cellClass += ' today';
+      if (isSun) cellClass += ' wd-sun';
+      else if (isSat || isFri) cellClass += ' wd-sat';
+
+      if (booked > 0) {
+        const pct = booked / TOTAL_ROOMS;
+        if (pct <= 0.34) { cellClass += ' occ-low';  availClass = 'avail-ok'; }
+        else if (pct <= 0.67) { cellClass += ' occ-mid';  availClass = 'avail-mid'; }
+        else if (pct < 1)     { cellClass += ' occ-high'; availClass = 'avail-low'; }
+        else                  { cellClass += ' occ-full'; availClass = 'avail-full'; }
+        availText = available === 0 ? 'เต็ม' : `เหลือ ${available}`;
+      }
+
+      // Booking dots (max 5)
+      const dots = dayBookings.slice(0, 5).map(b => {
+        const dotColor = DOT_COLORS[b.source] || 'dot-phone';
+        return `<div class="cal-dot ${dotColor}"></div>`;
+      }).join('') + (dayBookings.length > 5
+        ? `<div class="cal-dot-more">+${dayBookings.length - 5}</div>` : '');
+
+      cells += `
+        <div class="${cellClass}" onclick="openDayDetail('${dateStr}')">
+          <div class="cal-date">${d}</div>
+          ${availText ? `<div class="cal-avail ${availClass}">${availText}</div>` : ''}
+          ${dots ? `<div class="cal-dots">${dots}</div>` : ''}
+        </div>`;
+    }
+
+    document.getElementById('calGrid').innerHTML = cells;
+  }
+
+  // ============ DAY DETAIL ============
+  function openDayDetail(dateStr) {
+    const { booked, available, bookedRooms, bookings: dayBookings } = getRoomAvailability(dateStr);
+    const [y, m, d] = dateStr.split('-');
+    const dateObj = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    const dateLabel = `วัน${THAI_DAYS[dateObj.getDay()]} ${parseInt(d)} ${THAI_MONTHS_SHORT[parseInt(m) - 1]} ${parseInt(y) + 543}`;
+
+    document.getElementById('dayDetailTitle').textContent = dateLabel;
+
+    // Availability badge
+    const availEl = document.getElementById('dayDetailAvail');
+    if (available === TOTAL_ROOMS) {
+      availEl.innerHTML = `<span class="avail-badge ok">ว่างทุกห้อง (${TOTAL_ROOMS} ห้อง)</span>`;
+    } else if (available === 0) {
+      availEl.innerHTML = `<span class="avail-badge full">เต็มทุกห้อง</span>`;
+    } else {
+      availEl.innerHTML = `<span class="avail-badge some">เหลือ ${available} จาก ${TOTAL_ROOMS} ห้อง</span>`;
+    }
+
+    // Room availability chips
+    const roomsEl = document.getElementById('dayDetailRooms');
+    const chips = ALL_ROOMS.map(r => {
+      const taken = bookedRooms.has(r.id);
+      return `<div class="room-avail-chip ${taken ? 'taken' : 'free'}">${r.icon} ${escapeHtml(r.name)}</div>`;
+    }).join('');
+    roomsEl.innerHTML = `<div class="room-availability-grid">${chips}</div>`;
+
+    // Bookings list
+    const labelEl = document.getElementById('dayDetailBookingLabel');
+    const listEl = document.getElementById('dayDetailBookings');
+    if (dayBookings.length === 0) {
+      labelEl.textContent = '';
+      listEl.innerHTML = `<div class="day-empty">📋 ไม่มีการจองในวันนี้</div>`;
+    } else {
+      labelEl.textContent = `การจอง (${dayBookings.length})`;
+      listEl.innerHTML = dayBookings.map(b => {
+        const src = SOURCE_LABELS[b.source] || SOURCE_LABELS.phone;
+        const rooms = (b.rooms || []).map(id => ALL_ROOMS.find(r => r.id === id)?.name).filter(Boolean).join(', ');
+        const nights = calcNights(b.checkIn, b.checkOut);
+        return `
+          <div class="day-booking-card" data-id="${b.id}" onclick="editFromDay(this.dataset.id)">
+            <div class="day-booking-top">
+              <div class="day-booking-name">${escapeHtml(b.guestName)}</div>
+              <div class="source-badge ${src.class}">${src.icon} ${src.label}</div>
+            </div>
+            <div class="day-booking-rooms">🏠 ${escapeHtml(rooms)}</div>
+            <div class="day-booking-dates">📅 ${formatDate(b.checkIn)} → ${formatDate(b.checkOut)} (${nights} คืน)</div>
+          </div>`;
+      }).join('');
+    }
+
+    document.getElementById('dayDetailOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    history.pushState({ modal: 'dayDetail' }, '');
+  }
+
+  function closeDay() {
+    const wasActive = document.getElementById('dayDetailOverlay').classList.contains('active');
+    document.getElementById('dayDetailOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    if (wasActive && !isHandlingPopstate) history.back();
+  }
+
+  function editFromDay(id) {
+    const booking = bookings.find(b => b.id === id);
+    if (!booking) return;
+    closeDay();
+    setTimeout(() => openModal(booking), 80);
+  }
+
+  function render() {
+    updateStats();
+    if (currentView === 'calendar') renderCalendar();
+    if (currentView === 'revenue') renderRevenue();
+    const list = document.getElementById('bookingList');
+    const filtered = filterBookings();
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-text">ไม่มีรายการจอง</div>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = filtered.map(b => {
+      const status = getStatus(b);
+      const statusLabel = {
+        pending: '<span class="status-badge status-pending">รอเช็คอิน</span>',
+        checkedin: '<span class="status-badge status-checkedin">เช็คอินแล้ว</span>',
+        completed: '<span class="status-badge status-completed">เสร็จสิ้น</span>',
+      }[status];
+
+      const sourceInfo = SOURCE_LABELS[b.source] || SOURCE_LABELS.phone;
+      const nights = calcNights(b.checkIn, b.checkOut);
+      const roomNames = getRoomNames(b.rooms);
+
+      const statusBtn = {
+        pending: 'เช็คอิน',
+        checkedin: 'เช็คเอาท์',
+        completed: 'คืนสถานะ',
+      }[status];
+
+      const total = Number(b.price) || 0;
+      const paid = Number(b.paid) || 0;
+      const remaining = total - paid;
+      let payClass = 'unpaid', payTag = 'ยังไม่จ่าย', payTagClass = 'unpaid';
+      if (total > 0 && paid >= total) {
+        payClass = 'paid';
+        payTag = '✓ ชำระครบ';
+        payTagClass = 'paid';
+      } else if (paid > 0) {
+        payClass = 'partial';
+        payTag = 'คงเหลือ ฿' + remaining.toLocaleString();
+        payTagClass = 'partial';
+      }
+
+      const paymentBlock = total > 0 ? `
+        <div class="payment-summary-card ${payClass}">
+          <div class="payment-amounts">
+            <span class="paid-num">฿${paid.toLocaleString()}</span>
+            <span class="total-num">/ ฿${total.toLocaleString()}</span>
+          </div>
+          <span class="payment-status-tag ${payTagClass}">${payTag}</span>
+        </div>
+      ` : '';
+
+      return `
+        <div class="booking-card ${status}">
+          <div class="booking-header">
+            <div class="guest-info">
+              <div class="guest-name">${escapeHtml(b.guestName)}${statusLabel}</div>
+              ${b.guestPhone ? `<div class="guest-phone">📞 <a href="tel:${escapeHtml(b.guestPhone)}" style="color:inherit;text-decoration:none;">${escapeHtml(b.guestPhone)}</a></div>` : ''}
+            </div>
+            <div class="source-badge ${sourceInfo.class}">${sourceInfo.icon} ${sourceInfo.label}</div>
+          </div>
+
+          <div class="booking-details">
+            <div class="detail-item">
+              <div class="detail-label">เช็คอิน</div>
+              <div class="detail-value">${formatDate(b.checkIn)}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">เช็คเอาท์</div>
+              <div class="detail-value">${formatDate(b.checkOut)}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">จำนวนคืน</div>
+              <div class="detail-value">${nights} คืน</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">ผู้เข้าพัก</div>
+              <div class="detail-value">${b.guests || 1} คน</div>
+            </div>
+          </div>
+
+          <div>
+            ${roomNames.map(name => `<span class="room-tag">${escapeHtml(name)}</span>`).join('')}
+          </div>
+
+          ${paymentBlock}
+
+          ${b.notes ? `<div class="booking-notes">📝 ${escapeHtml(b.notes)}</div>` : ''}
+
+          <div class="booking-actions">
+            <button class="btn-action btn-status" onclick="toggleStatus('${b.id}')">${statusBtn}</button>
+            <button class="btn-action btn-edit" onclick="editBooking('${b.id}')">แก้ไข</button>
+            <button class="btn-action btn-delete" onclick="deleteBooking('${b.id}')">ลบ</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Init
+  loadFromLocal();
+  loadRoomPrices();
+  renderRoomOptions();
+  render();
+  initFirebase();
+
+  // Show settings on first load if no Firebase configured
+  if (!dbUrl && bookings.length === 0) {
+    setTimeout(() => openSettings(), 800);
+  }
+
+  // Event listeners
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      render();
+    });
+  });
+
+  document.querySelectorAll('.source-option').forEach(el => {
+    el.addEventListener('click', () => selectSource(el.dataset.source));
+  });
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    render();
+  });
+
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+
+  document.getElementById('settingsOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'settingsOverlay') closeSettings();
+  });
+
+  document.getElementById('checkIn').addEventListener('change', (e) => {
+    const checkOut = document.getElementById('checkOut');
+    if (!checkOut.value || checkOut.value <= e.target.value) {
+      const next = new Date(e.target.value);
+      next.setDate(next.getDate() + 1);
+      checkOut.value = next.toISOString().split('T')[0];
+    }
+    updateCalculatedPrice();
+  });
+
+  document.getElementById('checkOut').addEventListener('change', updateCalculatedPrice);
+
+  // Mobile back button: close any open modal instead of leaving page
+  window.addEventListener('popstate', () => {
+    isHandlingPopstate = true;
+    if (document.getElementById('dayDetailOverlay').classList.contains('active')) {
+      closeDay();
+    } else if (document.getElementById('modalOverlay').classList.contains('active')) {
+      closeModal();
+    } else if (document.getElementById('settingsOverlay').classList.contains('active')) {
+      closeSettings();
+    }
+    isHandlingPopstate = false;
+  });
+</script>
+
+</body>
+</html>

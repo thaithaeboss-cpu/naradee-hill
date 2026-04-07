@@ -2132,7 +2132,8 @@
   let firebaseRef = null;
   let pricesRef = null;
   let isSyncing = false;
-  let dbUrl = localStorage.getItem('naradee_firebase_url') || '';
+  const DEFAULT_DB_URL = 'https://naradee-hill-default-rtdb.asia-southeast1.firebasedatabase.app/';
+  let dbUrl = localStorage.getItem('naradee_firebase_url') || DEFAULT_DB_URL;
 
   // ============ STORAGE LAYER ============
   function loadFromLocal() {

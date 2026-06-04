@@ -1696,6 +1696,230 @@
   .rev-empty-text { font-size: 15px; font-weight: 600; }
 
   .rev-view-bottom { margin-bottom: 100px; }
+
+  /* ========== Finance sub-tabs ========== */
+  .finance-tabs {
+    display: flex;
+    gap: 6px;
+    background: white;
+    padding: 5px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .fin-tab {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .fin-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(45,79,57,0.25);
+  }
+
+  /* ========== Expense list ========== */
+  .btn-add-expense {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: transform 0.12s, box-shadow 0.18s;
+    box-shadow: 0 4px 14px rgba(45,79,57,0.2);
+  }
+  .btn-add-expense:active { transform: scale(0.98); }
+
+  .expense-period-summary {
+    background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+    border-radius: 18px;
+    padding: 18px 20px;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .expense-period-summary .label {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .expense-period-summary .amount {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+  }
+  .expense-period-summary .sub {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
+  .expense-list { display: flex; flex-direction: column; gap: 10px; }
+  .expense-item {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .expense-cat-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    color: white;
+  }
+  .expense-info { flex: 1; min-width: 0; }
+  .expense-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .expense-meta {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .expense-cat-name {
+    font-weight: 600;
+  }
+  .expense-amount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #b45309;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .expense-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .expense-actions .btn-action {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* ========== Category selector (modal) ========== */
+  .cat-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .cat-option {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.18s;
+  }
+  .cat-option.active {
+    border-color: var(--primary);
+    background: rgba(45,79,57,0.06);
+  }
+  .cat-option-icon { font-size: 22px; }
+  .cat-option-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 4px;
+  }
+
+  /* ========== Summary cards ========== */
+  .summary-profit-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 20px;
+    padding: 22px;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .summary-profit-card.negative {
+    background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+  }
+  .summary-profit-card .period {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.75;
+    margin-bottom: 4px;
+  }
+  .summary-profit-card .label {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 2px;
+  }
+  .summary-profit-card .amount {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .summary-profit-card .sub {
+    font-size: 12px;
+    opacity: 0.78;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .summary-mini {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 14px;
+  }
+  .summary-mini .icon { font-size: 20px; margin-bottom: 6px; }
+  .summary-mini .lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 3px;
+  }
+  .summary-mini .amt {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  .summary-mini .amt.in   { color: var(--success); }
+  .summary-mini .amt.out  { color: #b45309; }
+  .summary-mini .sub {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
 </style>
 </head>
 <body>
@@ -1739,7 +1963,7 @@
   <div class="view-toggle">
     <button class="view-btn active" data-view="list" onclick="setView('list')">📋 รายการ</button>
     <button class="view-btn" data-view="calendar" onclick="setView('calendar')">📅 ปฏิทิน</button>
-    <button class="view-btn" data-view="revenue" onclick="setView('revenue')">💰 รายได้</button>
+    <button class="view-btn" data-view="finance" onclick="setView('finance')">💰 การเงิน</button>
   </div>
 
   <!-- List View -->
@@ -1793,8 +2017,14 @@
     </div>
   </div>
 
-  <!-- Revenue View -->
-  <div id="revenueView" style="display:none">
+  <!-- Finance View -->
+  <div id="financeView" style="display:none">
+    <div class="finance-tabs">
+      <button class="fin-tab active" data-fintab="revenue" onclick="setFinanceTab('revenue')">📈 รายได้</button>
+      <button class="fin-tab"        data-fintab="expense" onclick="setFinanceTab('expense')">📉 ค่าใช้จ่าย</button>
+      <button class="fin-tab"        data-fintab="summary" onclick="setFinanceTab('summary')">📊 สรุป</button>
+    </div>
+
     <div class="period-presets" id="periodPresets">
       <button class="period-btn active" data-period="month"     onclick="setPeriod('month')">เดือนนี้</button>
       <button class="period-btn"        data-period="lastmonth" onclick="setPeriod('lastmonth')">เดือนที่แล้ว</button>
@@ -1815,12 +2045,24 @@
       </div>
     </div>
 
-    <div id="revenueContent"></div>
+    <div id="revenuePanel">
+      <div id="revenueContent"></div>
+    </div>
+
+    <div id="expensePanel" style="display:none">
+      <button class="btn-add-expense" onclick="openExpenseModal()">+ เพิ่มค่าใช้จ่าย</button>
+      <div id="expenseContent"></div>
+    </div>
+
+    <div id="summaryPanel" style="display:none">
+      <div id="summaryContent"></div>
+    </div>
+
     <div class="rev-view-bottom"></div>
   </div>
 </div>
 
-<button class="fab" onclick="openModal()">
+<button class="fab" id="mainFab" onclick="openModal()">
   <span class="fab-icon">+</span>
   <span>เพิ่มการจอง</span>
 </button>
@@ -2027,6 +2269,48 @@
   </div>
 </div>
 
+<!-- Expense Modal -->
+<div class="modal-overlay" id="expenseOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="expenseModalTitle">บันทึกค่าใช้จ่าย</div>
+      <button class="modal-close" onclick="closeExpenseModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="expenseForm" onsubmit="saveExpense(event)">
+        <input type="hidden" id="expenseId">
+
+        <div class="form-group">
+          <label class="form-label">วันที่ *</label>
+          <input type="date" class="form-input" id="expenseDate" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ชื่อรายการ *</label>
+          <input type="text" class="form-input" id="expenseName" required placeholder="เช่น ค่าน้ำเดือนมิถุนายน">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">จำนวนเงิน (บาท) *</label>
+          <input type="number" class="form-input" id="expenseAmount" min="0" step="0.01" required placeholder="0">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">หมวดหมู่ *</label>
+          <div class="cat-selector" id="categorySelector"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">หมายเหตุ</label>
+          <textarea class="form-textarea" id="expenseNotes" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">บันทึกค่าใช้จ่าย</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2108,7 +2392,22 @@
     walkin: { label: 'Walk-in', class: 'source-walkin', icon: '🚶' },
   };
 
+  const EXPENSE_CATEGORIES = [
+    { id: 'water',    label: 'ค่าน้ำ',         icon: '💧', color: '#0ea5e9' },
+    { id: 'electric', label: 'ค่าไฟ',          icon: '⚡', color: '#f59e0b' },
+    { id: 'cleaning', label: 'ทำความสะอาด',    icon: '🧹', color: '#8b5cf6' },
+    { id: 'repair',   label: 'ซ่อมแซม',        icon: '🔧', color: '#ef4444' },
+    { id: 'salary',   label: 'เงินเดือน',      icon: '👷', color: '#10b981' },
+    { id: 'other',    label: 'อื่นๆ',          icon: '📦', color: '#64748b' },
+  ];
+  const CAT_MAP = Object.fromEntries(EXPENSE_CATEGORIES.map(c => [c.id, c]));
+
   let bookings = [];
+  let expenses = [];
+  let expensesRef = null;
+  let editingExpenseId = null;
+  let selectedCategory = 'other';
+  let currentFinanceTab = 'revenue';
   let roomPrices = mergeRoomPrices(DEFAULT_PRICES, {});
   let currentFilter = 'all';
   let selectedSource = 'phone';
@@ -2162,6 +2461,32 @@
     localStorage.setItem('naradee_room_prices', JSON.stringify(roomPrices));
   }
 
+  function loadExpensesLocal() {
+    const data = localStorage.getItem('naradee_expenses');
+    expenses = data ? JSON.parse(data) : [];
+  }
+  function saveExpensesLocal() {
+    localStorage.setItem('naradee_expenses', JSON.stringify(expenses));
+  }
+  async function saveExpenseData(exp) {
+    const idx = expenses.findIndex(e => e.id === exp.id);
+    if (idx >= 0) expenses[idx] = exp;
+    else expenses.push(exp);
+    saveExpensesLocal();
+    if (expensesRef) {
+      try { await expensesRef.child(exp.id).set(exp); }
+      catch (e) { console.error('Expense cloud save failed', e); showToast('⚠️ ซิงก์คลาวด์ไม่สำเร็จ'); }
+    }
+  }
+  async function deleteExpenseData(id) {
+    expenses = expenses.filter(e => e.id !== id);
+    saveExpensesLocal();
+    if (expensesRef) {
+      try { await expensesRef.child(id).remove(); }
+      catch (e) { console.error('Expense cloud delete failed', e); }
+    }
+  }
+
   async function saveRoomPrices() {
     ALL_ROOMS.forEach(room => {
       const wd = document.getElementById('price-wd-' + room.id);
@@ -2206,6 +2531,7 @@
       firebaseDb = firebase.database(firebaseApp);
       firebaseRef = firebaseDb.ref('bookings');
       pricesRef = firebaseDb.ref('roomPrices');
+      expensesRef = firebaseDb.ref('expenses');
 
       setSyncStatus('syncing', 'กำลังเชื่อมต่อคลาวด์...');
 
@@ -2229,6 +2555,15 @@
           updateCalculatedPrice();
           render();
         }
+      });
+
+      expensesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        expenses = data ? Object.values(data) : [];
+        saveExpensesLocal();
+        if (currentView === 'finance') renderFinanceTab();
+      }, (error) => {
+        console.error('Expense sync error:', error);
       });
 
       return true;
@@ -2309,6 +2644,7 @@
   }
   function closeAnyModal() {
     if (document.getElementById('dayDetailOverlay').classList.contains('active')) closeDay();
+    else if (document.getElementById('expenseOverlay').classList.contains('active')) closeExpenseModal();
     else if (document.getElementById('modalOverlay').classList.contains('active')) closeModal();
     else if (document.getElementById('settingsOverlay').classList.contains('active')) closeSettings();
   }
@@ -2689,7 +3025,7 @@
     const y = today.getFullYear();
     const m = today.getMonth();
     const d = today.getDate();
-    const fmt = dt => dt.toISOString().split('T')[0];
+    const fmt = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
     switch (period) {
       case 'today':
         return { start: fmt(today), end: fmt(today) };
@@ -2785,13 +3121,13 @@
     } else {
       customRow.style.display = 'none';
     }
-    renderRevenue();
+    renderFinanceTab();
   }
 
   function applyCustomRange() {
     revCustomStart = document.getElementById('revStartDate').value;
     revCustomEnd   = document.getElementById('revEndDate').value;
-    if (revCustomStart && revCustomEnd) renderRevenue();
+    if (revCustomStart && revCustomEnd) renderFinanceTab();
   }
 
   function renderRevenue() {
@@ -2926,17 +3262,257 @@
     openModal(booking);
   }
 
+  // ============ EXPENSES ============
+  function renderCategorySelector() {
+    const container = document.getElementById('categorySelector');
+    container.innerHTML = EXPENSE_CATEGORIES.map(c => `
+      <div class="cat-option ${c.id === selectedCategory ? 'active' : ''}" data-cat="${c.id}" onclick="selectCategory('${c.id}')">
+        <div class="cat-option-icon">${c.icon}</div>
+        <div class="cat-option-label">${escapeHtml(c.label)}</div>
+      </div>
+    `).join('');
+  }
+
+  function selectCategory(cat) {
+    selectedCategory = cat;
+    document.querySelectorAll('.cat-option').forEach(el => {
+      el.classList.toggle('active', el.dataset.cat === cat);
+    });
+  }
+
+  function openExpenseModal(exp = null) {
+    const modal = document.getElementById('expenseOverlay');
+    document.getElementById('expenseForm').reset();
+
+    if (exp) {
+      editingExpenseId = exp.id;
+      document.getElementById('expenseModalTitle').textContent = 'แก้ไขค่าใช้จ่าย';
+      document.getElementById('expenseId').value = exp.id;
+      document.getElementById('expenseDate').value = exp.date;
+      document.getElementById('expenseName').value = exp.name;
+      document.getElementById('expenseAmount').value = exp.amount;
+      document.getElementById('expenseNotes').value = exp.notes || '';
+      selectedCategory = exp.category || 'other';
+    } else {
+      editingExpenseId = null;
+      document.getElementById('expenseModalTitle').textContent = 'บันทึกค่าใช้จ่าย';
+      document.getElementById('expenseDate').value = getToday();
+      selectedCategory = 'other';
+    }
+
+    renderCategorySelector();
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    history.pushState({ modal: 'expense' }, '');
+    showFloatingClose();
+  }
+
+  function closeExpenseModal() {
+    const wasActive = document.getElementById('expenseOverlay').classList.contains('active');
+    document.getElementById('expenseOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    editingExpenseId = null;
+    hideFloatingClose();
+    if (wasActive && !isHandlingPopstate) history.back();
+  }
+
+  async function saveExpense(e) {
+    e.preventDefault();
+    const exp = {
+      id: editingExpenseId || ('exp' + Date.now()),
+      date: document.getElementById('expenseDate').value,
+      name: document.getElementById('expenseName').value.trim(),
+      amount: parseFloat(document.getElementById('expenseAmount').value) || 0,
+      category: selectedCategory,
+      notes: document.getElementById('expenseNotes').value.trim(),
+      createdAt: editingExpenseId ? (expenses.find(x => x.id === editingExpenseId)?.createdAt || Date.now()) : Date.now(),
+      updatedAt: Date.now(),
+    };
+    await saveExpenseData(exp);
+    showToast(editingExpenseId ? 'แก้ไขค่าใช้จ่ายเรียบร้อย' : 'บันทึกค่าใช้จ่ายเรียบร้อย');
+    closeExpenseModal();
+    if (currentView === 'finance') renderFinanceTab();
+  }
+
+  async function deleteExpense(id) {
+    if (confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) {
+      await deleteExpenseData(id);
+      if (currentView === 'finance') renderFinanceTab();
+      showToast('ลบรายการแล้ว');
+    }
+  }
+
+  function editExpense(id) {
+    const exp = expenses.find(e => e.id === id);
+    if (exp) openExpenseModal(exp);
+  }
+
+  function getFilteredExpenses() {
+    const { start, end } = getPeriodDates(revPeriod);
+    if (!start || !end || start > end) return { filtered: [], start, end };
+    const filtered = expenses.filter(x => x.date >= start && x.date <= end);
+    return { filtered, start, end };
+  }
+
+  function renderExpenses() {
+    const container = document.getElementById('expenseContent');
+    const { filtered, start, end } = getFilteredExpenses();
+    if (!start || !end) {
+      container.innerHTML = `<div class="rev-empty"><div class="rev-empty-icon">📅</div><div class="rev-empty-text">กรุณาเลือกช่วงวันที่</div></div>`;
+      return;
+    }
+
+    const total = filtered.reduce((s, x) => s + (Number(x.amount) || 0), 0);
+    const periodLabel = formatThaiPeriodLabel(revPeriod, start, end);
+
+    const summary = `
+      <div class="expense-period-summary">
+        <div class="label">📉 ค่าใช้จ่ายรวม · ${periodLabel}</div>
+        <div class="amount">฿${total.toLocaleString()}</div>
+        <div class="sub">${filtered.length} รายการ</div>
+      </div>`;
+
+    if (filtered.length === 0) {
+      container.innerHTML = summary + `<div class="rev-empty"><div class="rev-empty-icon">📭</div><div class="rev-empty-text">ยังไม่มีค่าใช้จ่ายในช่วงนี้</div></div>`;
+      return;
+    }
+
+    const items = filtered
+      .slice().sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt)
+      .map(x => {
+        const cat = CAT_MAP[x.category] || CAT_MAP.other;
+        return `
+          <div class="expense-item">
+            <div style="flex:1;min-width:0;display:flex;align-items:center;gap:12px;">
+              <div class="expense-cat-icon" style="background:${cat.color}">${cat.icon}</div>
+              <div class="expense-info">
+                <div class="expense-name">${escapeHtml(x.name)}</div>
+                <div class="expense-meta">
+                  <span class="expense-cat-name" style="color:${cat.color}">${escapeHtml(cat.label)}</span>
+                  <span>·</span>
+                  <span>${formatDate(x.date)}</span>
+                </div>
+                ${x.notes ? `<div class="expense-meta" style="margin-top:4px;">📝 ${escapeHtml(x.notes)}</div>` : ''}
+                <div class="expense-actions">
+                  <button class="btn-action btn-edit" onclick="editExpense('${x.id}')">แก้ไข</button>
+                  <button class="btn-action btn-delete" onclick="deleteExpense('${x.id}')">ลบ</button>
+                </div>
+              </div>
+            </div>
+            <div class="expense-amount">฿${(Number(x.amount) || 0).toLocaleString()}</div>
+          </div>`;
+      }).join('');
+
+    container.innerHTML = summary + `<div class="expense-list">${items}</div>`;
+  }
+
+  function renderSummary() {
+    const container = document.getElementById('summaryContent');
+    const revData = getRevenueData();
+    const { filtered: expList, start, end } = getFilteredExpenses();
+
+    if (!revData || !start || !end) {
+      container.innerHTML = `<div class="rev-empty"><div class="rev-empty-icon">📅</div><div class="rev-empty-text">กรุณาเลือกช่วงวันที่</div></div>`;
+      return;
+    }
+
+    const revenue = revData.totalRevenue;
+    const expenseTotal = expList.reduce((s, x) => s + (Number(x.amount) || 0), 0);
+    const profit = revenue - expenseTotal;
+    const periodLabel = formatThaiPeriodLabel(revPeriod, start, end);
+
+    const profitCard = `
+      <div class="summary-profit-card ${profit < 0 ? 'negative' : ''}">
+        <div class="period">${periodLabel}</div>
+        <div class="label">${profit >= 0 ? '💎 กำไรสุทธิ' : '⚠️ ขาดทุนสุทธิ'}</div>
+        <div class="amount">฿${Math.abs(profit).toLocaleString()}</div>
+        <div class="sub">รายได้ ฿${revenue.toLocaleString()} − ค่าใช้จ่าย ฿${expenseTotal.toLocaleString()}</div>
+      </div>`;
+
+    const grid = `
+      <div class="summary-grid">
+        <div class="summary-mini">
+          <div class="icon">📈</div>
+          <div class="lbl">รายได้</div>
+          <div class="amt in">฿${revenue.toLocaleString()}</div>
+          <div class="sub">${revData.filtered.length} การจอง</div>
+        </div>
+        <div class="summary-mini">
+          <div class="icon">📉</div>
+          <div class="lbl">ค่าใช้จ่าย</div>
+          <div class="amt out">฿${expenseTotal.toLocaleString()}</div>
+          <div class="sub">${expList.length} รายการ</div>
+        </div>
+      </div>`;
+
+    // Expense breakdown by category
+    const byCat = {};
+    EXPENSE_CATEGORIES.forEach(c => byCat[c.id] = 0);
+    expList.forEach(x => {
+      const cid = byCat.hasOwnProperty(x.category) ? x.category : 'other';
+      byCat[cid] += Number(x.amount) || 0;
+    });
+    const maxCat = Math.max(...Object.values(byCat), 1);
+    const catRows = EXPENSE_CATEGORIES
+      .filter(c => byCat[c.id] > 0)
+      .sort((a, b) => byCat[b.id] - byCat[a.id])
+      .map(c => {
+        const v = byCat[c.id];
+        const pct = Math.round(v / maxCat * 100);
+        return `
+          <div class="source-bar-item">
+            <div class="source-bar-meta">
+              <div class="source-bar-name">${c.icon} ${escapeHtml(c.label)}</div>
+              <div class="source-bar-amount">฿${v.toLocaleString()}</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${c.color}"></div></div>
+          </div>`;
+      }).join('');
+
+    const catSection = catRows ? `
+      <div class="rev-section">
+        <div class="rev-section-title">🗂️ ค่าใช้จ่ายตามหมวดหมู่</div>
+        <div class="source-bar-row">${catRows}</div>
+      </div>` : '';
+
+    container.innerHTML = profitCard + grid + catSection;
+  }
+
   // ============ VIEW TOGGLE ============
   function setView(view) {
     currentView = view;
     document.getElementById('listView').style.display = view === 'list' ? '' : 'none';
     document.getElementById('calendarView').style.display = view === 'calendar' ? '' : 'none';
-    document.getElementById('revenueView').style.display = view === 'revenue' ? '' : 'none';
+    document.getElementById('financeView').style.display = view === 'finance' ? '' : 'none';
     document.querySelectorAll('.view-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.view === view);
     });
     if (view === 'calendar') renderCalendar();
-    if (view === 'revenue') renderRevenue();
+    if (view === 'finance') renderFinanceTab();
+    updateFab();
+  }
+
+  function setFinanceTab(tab) {
+    currentFinanceTab = tab;
+    document.getElementById('revenuePanel').style.display = tab === 'revenue' ? '' : 'none';
+    document.getElementById('expensePanel').style.display = tab === 'expense' ? '' : 'none';
+    document.getElementById('summaryPanel').style.display = tab === 'summary' ? '' : 'none';
+    document.querySelectorAll('.fin-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.fintab === tab);
+    });
+    renderFinanceTab();
+  }
+
+  function renderFinanceTab() {
+    if (currentFinanceTab === 'revenue') renderRevenue();
+    else if (currentFinanceTab === 'expense') renderExpenses();
+    else if (currentFinanceTab === 'summary') renderSummary();
+  }
+
+  function updateFab() {
+    const fab = document.getElementById('mainFab');
+    if (!fab) return;
+    fab.style.display = currentView === 'finance' ? 'none' : '';
   }
 
   // ============ CALENDAR ============
@@ -3107,7 +3683,7 @@
   function render() {
     updateStats();
     if (currentView === 'calendar') renderCalendar();
-    if (currentView === 'revenue') renderRevenue();
+    if (currentView === 'finance') renderFinanceTab();
     const list = document.getElementById('bookingList');
     const filtered = filterBookings();
 
@@ -3223,6 +3799,7 @@
   // Init
   loadFromLocal();
   loadRoomPrices();
+  loadExpensesLocal();
   renderRoomOptions();
   render();
   initFirebase();
@@ -3259,6 +3836,10 @@
     if (e.target.id === 'settingsOverlay') closeSettings();
   });
 
+  document.getElementById('expenseOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'expenseOverlay') closeExpenseModal();
+  });
+
   document.getElementById('checkIn').addEventListener('change', (e) => {
     const checkOut = document.getElementById('checkOut');
     if (!checkOut.value || checkOut.value <= e.target.value) {
@@ -3276,6 +3857,8 @@
     isHandlingPopstate = true;
     if (document.getElementById('dayDetailOverlay').classList.contains('active')) {
       closeDay();
+    } else if (document.getElementById('expenseOverlay').classList.contains('active')) {
+      closeExpenseModal();
     } else if (document.getElementById('modalOverlay').classList.contains('active')) {
       closeModal();
     } else if (document.getElementById('settingsOverlay').classList.contains('active')) {
